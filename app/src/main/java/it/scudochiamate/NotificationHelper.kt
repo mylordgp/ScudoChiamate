@@ -40,6 +40,8 @@ class NotificationHelper(private val context: Context) {
         val reasonStr = when (reason) {
             BlockReason.FOREIGN_PREFIX -> context.getString(R.string.reason_foreign)
             BlockReason.KNOWN_SPAM    -> context.getString(R.string.reason_spam)
+            BlockReason.TIME_BLOCK    -> context.getString(R.string.reason_time_block)
+            BlockReason.SYSTEM_IMPORT -> context.getString(R.string.reason_system)
         }
         val body = context.getString(R.string.notif_blocked_body, number, reasonStr)
 
