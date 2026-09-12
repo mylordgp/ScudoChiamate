@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Scudo Chiamate</string>
+
+    <!-- Stato servizio -->
+    <string name="service_active">🟢 Protezione attiva</string>
+    <string name="service_inactive">🔴 Protezione non attiva</string>
+    <string name="btn_activate">Attiva protezione</string>
+    <string name="role_granted">Protezione attivata con successo!</string>
+    <string name="role_denied">Attivazione non concessa. Vai nelle impostazioni di sistema.</string>
+    <string name="role_not_available">Funzione non disponibile su questo dispositivo.</string>
+
+    <!-- Statistiche -->
+    <string name="stats_title">Chiamate bloccate</string>
+    <string name="stat_total">Totale</string>
+    <string name="stat_foreign">Estere</string>
+    <string name="stat_spam">Spam</string>
+
+    <!-- Impostazioni filtri -->
+    <string name="settings_title">Filtri chiamate</string>
+    <string name="toggle_foreign_label">Blocca numeri esteri</string>
+    <string name="toggle_foreign_desc">Rifiuta chiamate con prefisso non italiano (+39)</string>
+    <string name="toggle_spam_label">Blocca spam italiano</string>
+    <string name="toggle_spam_desc">Rifiuta numeri di call center e truffatori noti</string>
+    <string name="toggle_notify_label">Notifica al blocco</string>
+    <string name="toggle_notify_desc">Mostra notifica quando una chiamata viene bloccata</string>
+
+    <!-- Fascia oraria -->
+    <string name="toggle_time_label">🌙 Silenzio notturno</string>
+    <string name="toggle_time_desc">Blocca tutte le chiamate sconosciute nella fascia oraria</string>
+    <string name="time_from">Da %1$s</string>
+    <string name="time_to">Fino alle %1$s</string>
+    <string name="time_from_default">Da 22:00</string>
+    <string name="time_to_default">Fino alle 08:00</string>
+
+    <!-- Whitelist -->
+    <string name="whitelist_card_title">✅ Numeri e prefissi consentiti</string>
+    <string name="whitelist_card_desc">Aggiungi prefissi esteri (+44, +33…) o numeri fissi sempre ammessi</string>
+    <string name="btn_manage">Gestisci</string>
+    <string name="whitelist_title">Lista bianca</string>
+    <string name="tab_prefixes">Prefissi Paese</string>
+    <string name="tab_numbers">Numeri specifici</string>
+    <string name="whitelist_empty">Nessun elemento. Tocca + per aggiungere.</string>
+    <string name="whitelist_add_prefix">Aggiungi prefisso Paese</string>
+    <string name="whitelist_add_number">Aggiungi numero specifico</string>
+    <string name="whitelist_prefix_hint">es. +44 oppure +33</string>
+    <string name="whitelist_number_hint">es. +447700900123</string>
+    <string name="btn_add">Aggiungi</string>
+
+    <!-- Import sistema -->
+    <string name="import_success">📥 Importati %1$d numeri dalla blacklist di sistema</string>
+
+    <!-- Cronologia -->
+    <string name="history_title">Cronologia blocchi</string>
+    <string name="btn_clear">Cancella tutto</string>
+    <string name="empty_history">Nessuna chiamata bloccata ancora 🛡️</string>
+    <string name="clear_confirm_title">Cancella cronologia</string>
+    <string name="clear_confirm_msg">Vuoi eliminare tutta la cronologia delle chiamate bloccate?</string>
+    <string name="confirm">Sì, cancella</string>
+    <string name="cancel">Annulla</string>
+
+    <!-- Motivi blocco -->
+    <string name="reason_foreign">🌍 Numero estero</string>
+    <string name="reason_spam">🚫 Spam italiano noto</string>
+    <string name="reason_time_block">🌙 Silenzio notturno</string>
+    <string name="reason_system">📥 Importato da sistema</string>
+
+    <!-- Notifiche -->
+    <string name="notif_channel_name">Chiamate bloccate</string>
+    <string name="notif_channel_desc">Notifiche per le chiamate bloccate da Scudo Chiamate</string>
+    <string name="notif_blocked_title">📵 Chiamata bloccata</string>
+    <string name="notif_blocked_body">%1$s — %2$s</string>
+</resources>

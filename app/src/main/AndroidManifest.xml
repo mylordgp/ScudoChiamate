@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Permessi necessari -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Per importare la blacklist nativa (concesso automaticamente col ruolo CALL_SCREENING) -->
+    <uses-permission android:name="android.permission.READ_BLOCKED_NUMBERS" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.ScudoChiamate">
+
+        <!-- Activity principale -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Activity gestione whitelist -->
+        <activity
+            android:name=".ManageWhitelistActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
+        <!--
+            CallScreeningService — intercetta chiamate PRIMA che il telefono suoni.
+            L'utente deve impostare l'app come predefinita per "Caller ID e spam":
+            Impostazioni → App → App predefinite → Caller ID e spam → Scudo Chiamate
+
+            Su MIUI (Poco F3):
+            App Telefono → ⋮ → Impostazioni → Blocco chiamate e spam
+        -->
+        <service
+            android:name=".SpamCallScreeningService"
+            android:exported="true"
+            android:permission="android.permission.BIND_SCREENING_SERVICE">
+            <intent-filter>
+                <action android:name="android.telecom.CallScreeningService" />
+            </intent-filter>
+        </service>
+
+    </application>
+
+</manifest>
