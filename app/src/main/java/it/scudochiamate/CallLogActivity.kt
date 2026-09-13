@@ -55,12 +55,15 @@ class CallLogActivity : AppCompatActivity() {
 
     private fun loadCallLog() {
         lifecycleScope.launch {
-            val entries = withContext(Dispatchers.IO) { readCallLog() }
+            val entries = withContext(Dispatchers.IO) {
+                val blockedNumbers = userBlacklist.getBlockedNumbers()
+                readCallLog(blockedNumbers)
+            }
             adapter.submitList(entries)
         }
     }
 
-    private fun readCallLog(): List<CallLogEntry> {
+    private fun readCallLog(blockedNumbers: Set<String>): List<CallLogEntry> {
         val entries = mutableListOf<CallLogEntry>()
         val seen = mutableSetOf<String>()
         val fmt = SimpleDateFormat("dd/MM HH:mm", Locale.getDefault())
@@ -73,7 +76,7 @@ class CallLogActivity : AppCompatActivity() {
                 "${CallLog.Calls.DATE} DESC"
             )
             cursor?.use {
-                val numIdx = it.getColumnIndexOrThrow(CallLog.Calls.NUMBER)
+                val numIdx  = it.getColumnIndexOrThrow(CallLog.Calls.NUMBER)
                 val nameIdx = it.getColumnIndexOrThrow(CallLog.Calls.CACHED_NAME)
                 val typeIdx = it.getColumnIndexOrThrow(CallLog.Calls.TYPE)
                 val dateIdx = it.getColumnIndexOrThrow(CallLog.Calls.DATE)
@@ -81,13 +84,15 @@ class CallLogActivity : AppCompatActivity() {
                     val number = it.getString(numIdx) ?: continue
                     if (seen.contains(number)) continue
                     seen.add(number)
+                    val normalized = number.replace(Regex("[\\s\\-().]+"), "")
+                    val isBlocked = blockedNumbers.contains(normalized)
                     val dateStr = fmt.format(Date(it.getLong(dateIdx)))
                     entries.add(CallLogEntry(
-                        number = number,
-                        name = it.getString(nameIdx) ?: "",
-                        type = it.getInt(typeIdx),
-                        date = dateStr,
-                        blocked = userBlacklist.isBlocked(number)
+                        number  = number,
+                        name    = it.getString(nameIdx) ?: "",
+                        type    = it.getInt(typeIdx),
+                        date    = dateStr,
+                        blocked = isBlocked
                     ))
                 }
             }
