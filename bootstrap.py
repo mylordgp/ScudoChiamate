@@ -338,3 +338,4 @@ for item in os.listdir(src):
         shutil.move(s, d)
 shutil.rmtree(src)
 print('✅ Tutti i file creati!')
+curl -L "https://claude.ai/content/0c5c32f6-2b80-45b3-9131-f180714ede11" -o patch2.py

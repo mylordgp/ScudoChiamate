@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
         if (result.resultCode == RESULT_OK) {
             updateServiceStatus(active = true)
             Toast.makeText(this, getString(R.string.role_granted), Toast.LENGTH_SHORT).show()
-            // Avvia import automatico non appena otteniamo il ruolo
             runSystemImport()
         } else {
             updateServiceStatus(active = false)
@@ -47,14 +46,20 @@ class MainActivity : AppCompatActivity() {
         setupToggles()
         setupTimeBlock()
         setupWhitelistButton()
+        setupCallLogButton()
         setupRecyclerView()
         observeViewModel()
         checkServiceRole()
+
+        // Aggiornamento automatico lista spam (primo avvio = download immediato)
+        SpamListUpdater.schedule(this)
+        if (DynamicSpamList(this).count() == 0) {
+            SpamListUpdater.runNow(this)
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        // Aggiorna le etichette orari se l'utente torna indietro da un'altra schermata
         updateTimeBlockLabels()
     }
 
@@ -133,6 +138,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     // -------------------------------------------------------------------------
+    // Pulsante cronologia chiamate
+    // -------------------------------------------------------------------------
+    private fun setupCallLogButton() {
+        binding.btnCallLog.setOnClickListener {
+            startActivity(Intent(this, CallLogActivity::class.java))
+        }
+    }
+
+    // -------------------------------------------------------------------------
     // RecyclerView chiamate bloccate
     // -------------------------------------------------------------------------
     private fun setupRecyclerView() {
@@ -180,7 +194,6 @@ class MainActivity : AppCompatActivity() {
         binding.btnActivate.visibility = if (active) View.GONE else View.VISIBLE
     }
 
-    /** Import automatico numeri di sistema — silenzioso, con toast di riepilogo. */
     private fun runSystemImport() {
         lifecycleScope.launch {
             when (val result = SystemImporter.importFromSystem(this@MainActivity)) {
@@ -193,12 +206,8 @@ class MainActivity : AppCompatActivity() {
                         ).show()
                     }
                 }
-                is SystemImporter.ImportResult.PermissionDenied -> {
-                    // Silenzioso — non rompere l'esperienza utente
-                }
-                is SystemImporter.ImportResult.Error -> {
-                    // Silenzioso in produzione; loggato dal SystemImporter
-                }
+                is SystemImporter.ImportResult.PermissionDenied -> { /* silenzioso */ }
+                is SystemImporter.ImportResult.Error -> { /* silenzioso */ }
             }
         }
     }

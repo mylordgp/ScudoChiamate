@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Permessi necessari -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- Per importare la blacklist nativa (concesso automaticamente col ruolo CALL_SCREENING) -->
     <uses-permission android:name="android.permission.READ_BLOCKED_NUMBERS" />
 
     <application
@@ -34,13 +34,16 @@
             android:exported="false"
             android:parentActivityName=".MainActivity" />
 
+        <!-- Activity cronologia chiamate -->
+        <activity
+            android:name=".CallLogActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
         <!--
             CallScreeningService — intercetta chiamate PRIMA che il telefono suoni.
-            L'utente deve impostare l'app come predefinita per "Caller ID e spam":
-            Impostazioni → App → App predefinite → Caller ID e spam → Scudo Chiamate
-
             Su MIUI (Poco F3):
-            App Telefono → ⋮ → Impostazioni → Blocco chiamate e spam
+            App Telefono → ⋮ → Impostazioni → Blocco chiamate e spam → Scudo Chiamate
         -->
         <service
             android:name=".SpamCallScreeningService"

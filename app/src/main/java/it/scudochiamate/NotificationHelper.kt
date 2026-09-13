@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.core.app.NotificationCompat
 
 /**
@@ -39,9 +38,10 @@ class NotificationHelper(private val context: Context) {
         val title = context.getString(R.string.notif_blocked_title)
         val reasonStr = when (reason) {
             BlockReason.FOREIGN_PREFIX -> context.getString(R.string.reason_foreign)
-            BlockReason.KNOWN_SPAM    -> context.getString(R.string.reason_spam)
-            BlockReason.TIME_BLOCK    -> context.getString(R.string.reason_time_block)
-            BlockReason.SYSTEM_IMPORT -> context.getString(R.string.reason_system)
+            BlockReason.KNOWN_SPAM     -> context.getString(R.string.reason_spam)
+            BlockReason.TIME_BLOCK     -> context.getString(R.string.reason_time_block)
+            BlockReason.SYSTEM_IMPORT  -> context.getString(R.string.reason_system)
+            BlockReason.USER_BLACKLIST -> context.getString(R.string.reason_user)
         }
         val body = context.getString(R.string.notif_blocked_body, number, reasonStr)
 
