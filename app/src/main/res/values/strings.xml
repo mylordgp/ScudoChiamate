@@ -83,4 +83,7 @@
     <!-- Motivo blocco aggiuntivo -->
     <string name="reason_user">🚫 Bloccato dall\'utente</string>
 
+    <string name="btn_update_spam">Aggiorna lista spam</string>
+    <string name="update_spam_running">Aggiornamento in corso…</string>
+    <string name="update_spam_done">Lista spam aggiornata!</string>
 </resources>

@@ -27,10 +27,10 @@ class CallLogAdapter(
             val newBlocked = !entry.blocked
             val updated = entry.copy(blocked = newBlocked)
             onToggleBlock(updated, newBlocked)
-            applyBlockStyle(holder, newBlocked)
-            holder.b.btnBlock.text = holder.itemView.context.getString(
-                if (newBlocked) R.string.call_log_unblock else R.string.call_log_block
-            )
+            // Aggiorna la lista in modo che DiffUtil rilevi il cambiamento
+            val newList = currentList.toMutableList()
+            newList[holder.adapterPosition] = updated
+            submitList(newList)
         }
     }
 

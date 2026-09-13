@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         setupTimeBlock()
         setupWhitelistButton()
         setupCallLogButton()
+        setupUpdateSpamButton()
         setupRecyclerView()
         observeViewModel()
         checkServiceRole()
@@ -140,7 +141,8 @@ class MainActivity : AppCompatActivity() {
     // -------------------------------------------------------------------------
     // Pulsante cronologia chiamate
     // -------------------------------------------------------------------------
-    private fun setupCallLogButton() {
+    private fun setupCallLogButton()
+        setupUpdateSpamButton() {
         binding.btnCallLog.setOnClickListener {
             startActivity(Intent(this, CallLogActivity::class.java))
         }
@@ -211,4 +213,18 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun setupUpdateSpamButton() {
+        binding.btnUpdateSpam.setOnClickListener {
+            binding.btnUpdateSpam.isEnabled = false
+            binding.btnUpdateSpam.text = getString(R.string.update_spam_running)
+            SpamListUpdater.runNow(this)
+            binding.btnUpdateSpam.postDelayed({
+                binding.btnUpdateSpam.isEnabled = true
+                binding.btnUpdateSpam.text = getString(R.string.btn_update_spam)
+                Toast.makeText(this, getString(R.string.update_spam_done), Toast.LENGTH_SHORT).show()
+            }, 4000)
+        }
+    }
+
 }

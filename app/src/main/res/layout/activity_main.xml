@@ -104,6 +104,17 @@
                             android:text="@string/stat_spam" android:textSize="12sp" android:textColor="@color/text_secondary" />
                     </LinearLayout>
                 </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnUpdateSpam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/btn_update_spam"
+                    android:textSize="12sp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    app:strokeColor="@color/primary" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
