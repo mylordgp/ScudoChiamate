@@ -81,6 +81,6 @@
     <string name="call_log_permission_denied">Permesso cronologia chiamate non concesso</string>
 
     <!-- Motivo blocco aggiuntivo -->
-    <string name="reason_user">🚫 Bloccato dall'utente</string>
+    <string name="reason_user">🚫 Bloccato dall\'utente</string>
 
 </resources>
