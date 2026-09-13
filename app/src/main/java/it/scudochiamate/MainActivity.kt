@@ -141,8 +141,7 @@ class MainActivity : AppCompatActivity() {
     // -------------------------------------------------------------------------
     // Pulsante cronologia chiamate
     // -------------------------------------------------------------------------
-    private fun setupCallLogButton()
-        setupUpdateSpamButton() {
+    private fun setupCallLogButton() {
         binding.btnCallLog.setOnClickListener {
             startActivity(Intent(this, CallLogActivity::class.java))
         }
