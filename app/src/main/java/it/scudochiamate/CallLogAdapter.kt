@@ -1,68 +1,53 @@
 package it.scudochiamate
 
-import android.content.res.ColorStateList
-import android.provider.CallLog
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import it.scudochiamate.databinding.ItemCallLogBinding
-import java.text.SimpleDateFormat
-import java.util.*
 
 class CallLogAdapter(
     private val onToggleBlock: (CallLogEntry, Boolean) -> Unit
-) : RecyclerView.Adapter<CallLogAdapter.VH>() {
+) : ListAdapter<CallLogEntry, CallLogAdapter.VH>(DIFF) {
 
-    private val items = mutableListOf<CallLogEntry>()
+    inner class VH(val b: ItemCallLogBinding) : RecyclerView.ViewHolder(b.root)
 
-    fun submitList(list: List<CallLogEntry>) {
-        items.clear()
-        items.addAll(list)
-        notifyDataSetChanged()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        VH(ItemCallLogBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        val entry = getItem(position)
+        holder.b.tvNumber.text = if (entry.name.isNotBlank()) "${entry.name}\n${entry.number}" else entry.number
+        holder.b.tvDate.text = entry.date
+        applyBlockStyle(holder, entry.blocked)
+
+        holder.b.btnBlock.setOnClickListener {
+            val newBlocked = !entry.blocked
+            val updated = entry.copy(blocked = newBlocked)
+            onToggleBlock(updated, newBlocked)
+            applyBlockStyle(holder, newBlocked)
+            holder.b.btnBlock.text = holder.itemView.context.getString(
+                if (newBlocked) R.string.call_log_unblock else R.string.call_log_block
+            )
+        }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val b = ItemCallLogBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return VH(b)
+    private fun applyBlockStyle(holder: VH, blocked: Boolean) {
+        val ctx = holder.itemView.context
+        holder.b.btnBlock.text = ctx.getString(
+            if (blocked) R.string.call_log_unblock else R.string.call_log_block
+        )
+        holder.b.btnBlock.setBackgroundColor(
+            if (blocked) Color.parseColor("#F44336") else Color.parseColor("#4CAF50")
+        )
     }
 
-    override fun onBindViewHolder(holder: VH, position: Int) = holder.bind(items[position])
-    override fun getItemCount() = items.size
-
-    inner class VH(private val b: ItemCallLogBinding) : RecyclerView.ViewHolder(b.root) {
-
-        private val fmt = SimpleDateFormat("dd/MM HH:mm", Locale.ITALY)
-
-        fun bind(entry: CallLogEntry) {
-            b.tvNumber.text = if (entry.name != null) "\${entry.name}\n\${entry.number}"
-                              else entry.number
-            b.tvDate.text = typeIcon(entry.type) + fmt.format(Date(entry.date))
-
-            applyBlockStyle(entry.blocked)
-
-            b.btnBlock.setOnClickListener {
-                val newBlocked = !entry.blocked
-                entry.blocked = newBlocked
-                onToggleBlock(entry, newBlocked)
-                applyBlockStyle(newBlocked)
-            }
-        }
-
-        private fun typeIcon(type: Int) = when (type) {
-            CallLog.Calls.INCOMING_TYPE -> "📞 "
-            CallLog.Calls.OUTGOING_TYPE -> "📤 "
-            CallLog.Calls.MISSED_TYPE   -> "📵 "
-            else                         -> "📋 "
-        }
-
-        private fun applyBlockStyle(blocked: Boolean) {
-            val ctx = b.root.context
-            b.btnBlock.text = ctx.getString(
-                if (blocked) R.string.call_log_unblock else R.string.call_log_block
-            )
-            b.btnBlock.backgroundTintList = ColorStateList.valueOf(
-                ctx.getColor(if (blocked) R.color.red_inactive else R.color.primary)
-            )
+    companion object {
+        val DIFF = object : DiffUtil.ItemCallback<CallLogEntry>() {
+            override fun areItemsTheSame(a: CallLogEntry, b: CallLogEntry) = a.number == b.number
+            override fun areContentsTheSame(a: CallLogEntry, b: CallLogEntry) = a == b
         }
     }
 }

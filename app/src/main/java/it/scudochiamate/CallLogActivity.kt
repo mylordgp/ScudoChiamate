@@ -38,9 +38,9 @@ class CallLogActivity : AppCompatActivity() {
         title = getString(R.string.call_log_title)
 
         userBlacklist = UserBlacklist(this)
-        adapter = CallLogAdapter { number, block ->
-            if (block) userBlacklist.addNumber(number)
-            else userBlacklist.removeNumber(number)
+        adapter = CallLogAdapter { entry, block ->
+            if (block) userBlacklist.addNumber(entry.number)
+            else userBlacklist.removeNumber(entry.number)
         }
         binding.rvCallLog.layoutManager = LinearLayoutManager(this)
         binding.rvCallLog.adapter = adapter
@@ -81,11 +81,12 @@ class CallLogActivity : AppCompatActivity() {
                     val number = it.getString(numIdx) ?: continue
                     if (seen.contains(number)) continue
                     seen.add(number)
+                    val dateStr = fmt.format(Date(it.getLong(dateIdx)))
                     entries.add(CallLogEntry(
                         number = number,
                         name = it.getString(nameIdx) ?: "",
                         type = it.getInt(typeIdx),
-                        date = fmt.format(Date(it.getLong(dateIdx))),
+                        date = dateStr,
                         blocked = userBlacklist.isBlocked(number)
                     ))
                 }
