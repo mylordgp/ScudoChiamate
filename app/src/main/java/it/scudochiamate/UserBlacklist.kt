@@ -33,3 +33,4 @@ class UserBlacklist(context: Context) {
     private const val PREFS_NAME = "user_blacklist"
     private const val KEY_NUMBERS = "blocked_numbers"
 }
+}
