@@ -33,4 +33,19 @@ class UserBlacklist(context: Context) {
     private const val PREFS_NAME = "user_blacklist"
     private const val KEY_NUMBERS = "blocked_numbers"
 }
+    fun exportAsJson(): String {
+        return org.json.JSONArray(getBlockedNumbers()).toString()
+    }
+
+    fun importFromJson(json: String): Int {
+        return try {
+            val array = org.json.JSONArray(json)
+            var count = 0
+            for (i in 0 until array.length()) {
+                val num = normalize(array.getString(i))
+                if (addNumber(num)) count++
+            }
+            count
+        } catch (e: Exception) { -1 }
+    }
 }
