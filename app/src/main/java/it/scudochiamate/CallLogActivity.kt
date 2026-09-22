@@ -94,9 +94,10 @@ class CallLogActivity : AppCompatActivity() {
                 val ti = it.getColumnIndexOrThrow(CallLog.Calls.TYPE)
                 val di = it.getColumnIndexOrThrow(CallLog.Calls.DATE)
                 while (it.moveToNext() && entries.size < 200) {
-                    val number = it.getString(ni) ?: continue
-                    if (!seen.add(number)) continue
-                    val norm = number.replace(Regex("[\\s\\-().]+"), "")
+                val number = it.getString(ni) ?: continue
+                val callType = it.getInt(ti)
+                if (callType == CallLog.Calls.OUTGOING_TYPE) continue
+                val norm = UserBlacklist.normalize(number)
                     entries.add(CallLogEntry(
                         number = number,
                         name = it.getString(mi) ?: "",
