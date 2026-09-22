@@ -28,11 +28,8 @@ class UserBlacklist(context: Context) {
     fun getBlockedNumbers(): Set<String> =
         prefs.getStringSet(KEY_NUMBERS, emptySet()) ?: emptySet()
 
-    private fun normalize(raw: String): String =
-        raw.replace(Regex("[\\s\\-().]+"), "")
-
     companion object {
-        private const val PREFS_NAME = "user_blacklist"
-        private const val KEY_NUMBERS = "blocked_numbers"
-    }
+    fun normalize(raw: String): String = raw.replace(Regex("[\\s\\-().]+"), "")
+    private const val PREFS_NAME = "user_blacklist"
+    private const val KEY_NUMBERS = "blocked_numbers"
 }
