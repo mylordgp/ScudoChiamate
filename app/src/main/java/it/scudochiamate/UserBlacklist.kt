@@ -43,7 +43,8 @@ class UserBlacklist(context: Context) {
             var count = 0
             for (i in 0 until array.length()) {
                 val num = normalize(array.getString(i))
-                if (addNumber(num)) count++
+             addNumber(num)
+            count++
             }
             count
         } catch (e: Exception) { -1 }
