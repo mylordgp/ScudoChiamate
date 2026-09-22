@@ -21,7 +21,33 @@ class MainActivity : AppCompatActivity() {
     private lateinit var settings: SettingsManager
     private lateinit var timeMgr: TimeBlockManager
     private val viewModel: MainViewModel by viewModels()
+    private lateinit var blacklist: UserBlacklist
 
+    private val exportLauncher = registerForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri ?: return@registerForActivityResult
+        try {
+            contentResolver.openOutputStream(uri)?.use { it.write(blacklist.exportAsJson().toByteArray()) }
+            Toast.makeText(this, "Lista esportata", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Errore esportazione", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private val importLauncher = registerForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri ?: return@registerForActivityResult
+        try {
+            val json = contentResolver.openInputStream(uri)?.use { it.readBytes().toString(Charsets.UTF_8) }
+            val count = json?.let { blacklist.importFromJson(it) } ?: -1
+            if (count >= 0) Toast.makeText(this, "Importati $count numeri", Toast.LENGTH_SHORT).show()
+            else Toast.makeText(this, "File non valido", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Errore importazione", Toast.LENGTH_SHORT).show()
+        }
+    }
     private val roleRequestLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -41,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         settings = SettingsManager(this)
+        blacklist = UserBlacklist(this)
         timeMgr  = TimeBlockManager(this)
 
         setupToggles()
@@ -48,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         setupWhitelistButton()
         setupCallLogButton()
         setupUpdateSpamButton()
+        setupExportImport()
         setupRecyclerView()
         observeViewModel()
         checkServiceRole()
@@ -225,5 +253,12 @@ class MainActivity : AppCompatActivity() {
             }, 4000)
         }
     }
-
+    private fun setupExportImport() {
+        binding.btnExportBlacklist.setOnClickListener {
+            exportLauncher.launch("scudo_chiamate_backup.json")
+        }
+        binding.btnImportBlacklist.setOnClickListener {
+            importLauncher.launch(arrayOf("application/json", "text/plain"))
+        }
+    }
 }
