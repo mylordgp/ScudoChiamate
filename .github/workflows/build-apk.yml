@@ -18,11 +18,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      - name: Configura Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Scarica Gradle e genera wrapper
+  
+     
+     - name: Scarica Gradle e genera wrapper
         run: |
           wget -q https://services.gradle.org/distributions/gradle-8.9-bin.zip -P /tmp
           unzip -q /tmp/gradle-8.9-bin.zip -d /tmp
