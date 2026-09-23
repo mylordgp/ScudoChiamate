@@ -22,6 +22,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var timeMgr: TimeBlockManager
     private val viewModel: MainViewModel by viewModels()
     private lateinit var blacklist: UserBlacklist
+        private lateinit var whitelist: WhitelistManager
+
+    private val contactsPermLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { /* silenzioso */ }
 
     private val exportLauncher = registerForActivityResult(
         ActivityResultContracts.CreateDocument("application/json")
@@ -68,6 +73,11 @@ class MainActivity : AppCompatActivity() {
 
         settings = SettingsManager(this)
         blacklist = UserBlacklist(this)
+                whitelist = WhitelistManager(this)
+        if (checkSelfPermission(android.Manifest.permission.READ_CONTACTS)
+            != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            contactsPermLauncher.launch(android.Manifest.permission.READ_CONTACTS)
+        }
         timeMgr  = TimeBlockManager(this)
 
         setupToggles()
@@ -190,7 +200,14 @@ class MainActivity : AppCompatActivity() {
         viewModel.foreignCount.observe(this) { binding.tvForeignCount.text = it.toString() }
         viewModel.spamCount.observe(this)    { binding.tvSpamCount.text    = it.toString() }
         viewModel.allCalls.observe(this) { calls ->
-            binding.rvBlockedCalls.adapter = BlockedCallsAdapter(calls) { viewModel.deleteCall(it) }
+                      binding.rvBlockedCalls.adapter = BlockedCallsAdapter(
+                calls,
+                onDelete = { viewModel.deleteCall(it) },
+                onWhitelist = { call ->
+                    whitelist.addAllowedNumber(call.phoneNumber)
+                    Toast.makeText(this, "Numero aggiunto alla whitelist", Toast.LENGTH_SHORT).show()
+                }
+            )
         }
     }
 
