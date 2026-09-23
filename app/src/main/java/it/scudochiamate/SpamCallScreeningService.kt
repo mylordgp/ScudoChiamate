@@ -16,6 +16,12 @@ import java.util.Date
  * Ordine di priorità (dalla più alta alla più bassa):
  *
  *   0. USER BLACKLIST — numero bloccato manualmente dall'utente
+         // 0.5 RUBRICA → passa sempre
+        if (isInContacts(rawNumber)) {
+            Log.d(tag, "Contatto in rubrica — consentita: $rawNumber")
+            respondToCall(callDetails, buildAllowResponse())
+            return
+        }
  *   1. WHITELIST      — numero/prefisso in whitelist → sempre consentito
  *   2. TIME BLOCK     — fascia oraria di silenzio → blocca
  *   3. FOREIGN        — prefisso non italiano → blocca (se toggle attivo)
@@ -98,6 +104,17 @@ class SpamCallScreeningService : CallScreeningService() {
     // Risposte CallScreening
     // -------------------------------------------------------------------------
 
+        private fun isInContacts(number: String): Boolean {
+        return try {
+            val uri = android.net.Uri.withAppendedPath(
+                android.provider.ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
+                android.net.Uri.encode(number)
+            )
+            contentResolver.query(uri,
+                arrayOf(android.provider.ContactsContract.PhoneLookup._ID),
+                null, null, null)?.use { it.count > 0 } ?: false
+        } catch (e: Exception) { false }
+    }
     private fun buildBlockResponse(): CallResponse =
         CallResponse.Builder()
             .setDisallowCall(true)
