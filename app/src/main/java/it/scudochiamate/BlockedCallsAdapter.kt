@@ -12,7 +12,8 @@ import java.util.Locale
 
 class BlockedCallsAdapter(
     private val calls: List<BlockedCall>,
-    private val onDelete: (BlockedCall) -> Unit
+       private val onDelete: (BlockedCall) -> Unit,
+    private val onWhitelist: (BlockedCall) -> Unit
 ) : RecyclerView.Adapter<BlockedCallsAdapter.ViewHolder>() {
 
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ITALY)
@@ -23,6 +24,7 @@ class BlockedCallsAdapter(
         val tvDate: TextView     = view.findViewById(R.id.tvDate)
         val btnDelete: ImageButton = view.findViewById(R.id.btnDelete)
     }
+            val btnWhitelist: ImageButton = view.findViewById(R.id.btnWhitelist)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -43,6 +45,7 @@ class BlockedCallsAdapter(
         holder.tvDate.text = dateFormat.format(call.timestamp)
         holder.btnDelete.setOnClickListener { onDelete(call) }
     }
+            holder.btnWhitelist.setOnClickListener { onWhitelist(call) }
 
     override fun getItemCount() = calls.size
 }
