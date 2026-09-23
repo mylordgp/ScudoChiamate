@@ -54,6 +54,14 @@
             </LinearLayout>
         </LinearLayout>
 
+                <ImageButton
+            android:id="@+id/btnWhitelist"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/ic_input_add"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="Aggiungi a whitelist" />
         <ImageButton
             android:id="@+id/btnDelete"
             android:layout_width="32dp"
