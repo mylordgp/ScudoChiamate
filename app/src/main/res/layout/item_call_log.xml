@@ -32,6 +32,17 @@
 
     </LinearLayout>
 
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnWhitelistLog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:text="✓ OK"
+        android:textColor="@android:color/white"
+        android:layout_marginEnd="6dp"
+        android:visibility="gone"
+        style="@style/Widget.MaterialComponents.Button" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnBlock"
         android:layout_width="wrap_content"
