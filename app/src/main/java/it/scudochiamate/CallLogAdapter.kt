@@ -2,6 +2,7 @@ package it.scudochiamate
 
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -9,7 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import it.scudochiamate.databinding.ItemCallLogBinding
 
 class CallLogAdapter(
-    private val onToggleBlock: (CallLogEntry, Boolean) -> Unit
+    private val onToggleBlock: (CallLogEntry, Boolean) -> Unit,
+    private val onWhitelist: (CallLogEntry) -> Unit = {}
 ) : ListAdapter<CallLogEntry, CallLogAdapter.VH>(DIFF) {
 
     inner class VH(val b: ItemCallLogBinding) : RecyclerView.ViewHolder(b.root)
@@ -27,10 +29,13 @@ class CallLogAdapter(
             val newBlocked = !entry.blocked
             val updated = entry.copy(blocked = newBlocked)
             onToggleBlock(updated, newBlocked)
-            // Aggiorna la lista in modo che DiffUtil rilevi il cambiamento
             val newList = currentList.toMutableList()
             newList[holder.adapterPosition] = updated
             submitList(newList)
+        }
+
+        holder.b.btnWhitelistLog.setOnClickListener {
+            onWhitelist(entry)
         }
     }
 
@@ -42,6 +47,9 @@ class CallLogAdapter(
         holder.b.btnBlock.setBackgroundColor(
             if (blocked) Color.parseColor("#F44336") else Color.parseColor("#4CAF50")
         )
+        // mostra il pulsante whitelist solo se il numero è bloccato
+        holder.b.btnWhitelistLog.visibility = if (blocked) View.VISIBLE else View.GONE
+        holder.b.btnWhitelistLog.setBackgroundColor(Color.parseColor("#2196F3"))
     }
 
     companion object {
