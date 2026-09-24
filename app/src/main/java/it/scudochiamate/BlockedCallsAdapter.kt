@@ -36,8 +36,7 @@ class BlockedCallsAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val call = calls[position]
         val name = nameFor(call.phoneNumber)
-        holder.tvNumber.text = if (name.isNotBlank()) "$name
-${call.phoneNumber}" else call.phoneNumber
+        holder.tvNumber.text = if (name.isNotBlank()) "$name\n${call.phoneNumber}" else call.phoneNumber
         holder.tvReason.text = when (call.reason) {
             "FOREIGN_PREFIX" -> holder.itemView.context.getString(R.string.reason_foreign)
             "KNOWN_SPAM"     -> holder.itemView.context.getString(R.string.reason_spam)

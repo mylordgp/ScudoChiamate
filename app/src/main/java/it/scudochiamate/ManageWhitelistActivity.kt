@@ -71,8 +71,7 @@ class ManageWhitelistActivity : AppCompatActivity() {
         tvEmpty.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
         val label: (String) -> String = { item ->
             val name = if (currentTab == 1) whitelist.getNameFor(item) else ""
-            if (name.isNotBlank()) "$name
-$item" else item
+            if (name.isNotBlank()) "$name\n$item" else item
         }
         rvList.adapter = WhitelistItemAdapter(items, label) { item ->
             if (currentTab == 0) whitelist.removeAllowedPrefix(item)
