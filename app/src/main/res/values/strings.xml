@@ -79,6 +79,7 @@
     <string name="call_log_block">Blocca</string>
     <string name="call_log_unblock">Sblocca</string>
     <string name="call_log_search_hint">Cerca per nome o numero</string>
+    <string name="call_log_in_whitelist">✓ In whitelist</string>
     <string name="call_log_whitelist_added">Numero aggiunto alla whitelist</string>
     <string name="call_log_permission_denied">Permesso cronologia chiamate non concesso</string>
 

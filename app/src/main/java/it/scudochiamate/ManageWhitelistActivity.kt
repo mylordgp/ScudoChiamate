@@ -69,7 +69,12 @@ class ManageWhitelistActivity : AppCompatActivity() {
             whitelist.getAllowedNumbers().toList().sorted()
 
         tvEmpty.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
-        rvList.adapter = WhitelistItemAdapter(items) { item ->
+        val label: (String) -> String = { item ->
+            val name = if (currentTab == 1) whitelist.getNameFor(item) else ""
+            if (name.isNotBlank()) "$name
+$item" else item
+        }
+        rvList.adapter = WhitelistItemAdapter(items, label) { item ->
             if (currentTab == 0) whitelist.removeAllowedPrefix(item)
             else                 whitelist.removeAllowedNumber(item)
             refreshList()
@@ -111,6 +116,7 @@ class ManageWhitelistActivity : AppCompatActivity() {
 /** Adapter semplice per lista whitelist con pulsante eliminazione. */
 class WhitelistItemAdapter(
     private val items: List<String>,
+    private val label: (String) -> String = { it },
     private val onDelete: (String) -> Unit
 ) : RecyclerView.Adapter<WhitelistItemAdapter.VH>() {
 
@@ -127,7 +133,7 @@ class WhitelistItemAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = items[position]
-        holder.tvValue.text = item
+        holder.tvValue.text = label(item)
         holder.btnDel.setOnClickListener { onDelete(item) }
     }
 

@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -22,7 +23,13 @@ class CallLogAdapter(
     override fun onBindViewHolder(holder: VH, position: Int) {
         val entry = getItem(position)
         holder.b.tvNumber.text = if (entry.name.isNotBlank()) "${entry.name}\n${entry.number}" else entry.number
-        holder.b.tvDate.text = entry.date
+        val ctx = holder.itemView.context
+        holder.b.tvDate.text = if (entry.whitelisted)
+            "${entry.date} · ${ctx.getString(R.string.call_log_in_whitelist)}" else entry.date
+        holder.b.tvDate.setTextColor(ContextCompat.getColor(ctx,
+            if (entry.whitelisted) R.color.green_active else R.color.text_secondary))
+        holder.itemView.setBackgroundColor(
+            if (entry.whitelisted) ContextCompat.getColor(ctx, R.color.green_light_bg) else Color.TRANSPARENT)
         applyBlockStyle(holder, entry.blocked)
         // mostra il pulsante whitelist per ogni numero non ancora consentito
         holder.b.btnWhitelistLog.visibility = if (entry.whitelisted) View.GONE else View.VISIBLE

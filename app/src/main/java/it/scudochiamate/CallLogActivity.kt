@@ -43,7 +43,7 @@ class CallLogActivity : AppCompatActivity() {
         whitelist = WhitelistManager(this)
         adapter = CallLogAdapter(
             onToggleBlock = { entry, block ->
-                if (block) userBlacklist.addNumber(entry.number)
+                if (block) userBlacklist.addNumber(entry.number, entry.name)
                 else userBlacklist.removeNumber(entry.number)
                 // mantiene allineata la lista completa, usata dal filtro di ricerca
                 allEntries = allEntries.map {
@@ -52,7 +52,7 @@ class CallLogActivity : AppCompatActivity() {
             },
             onWhitelist = { entry ->
                 userBlacklist.removeNumber(entry.number)
-                whitelist.addAllowedNumber(entry.number)
+                whitelist.addAllowedNumber(entry.number, entry.name)
                 Toast.makeText(this, getString(R.string.call_log_whitelist_added), Toast.LENGTH_SHORT).show()
                 loadCallLog()
             }
@@ -130,9 +130,11 @@ class CallLogActivity : AppCompatActivity() {
                     val callType = it.getInt(ti)
                     if (callType == CallLog.Calls.OUTGOING_TYPE) continue
                     val norm = UserBlacklist.normalize(number)
+                    val name = it.getString(mi) ?: ""
+                    backfillName(norm, name, blocked)
                     entries.add(CallLogEntry(
                         number = number,
-                        name = it.getString(mi) ?: "",
+                        name = name,
                         type = callType,
                         date = fmt.format(Date(it.getLong(di))),
                         blocked = blocked.contains(norm) || system.contains(norm),
@@ -142,6 +144,18 @@ class CallLogActivity : AppCompatActivity() {
             }
         } catch (e: Exception) { e.printStackTrace() }
         return entries
+    }
+
+    /**
+     * Numeri aggiunti prima che venisse salvato il nome: se sono in whitelist
+     * o nella lista nera senza nome, usa quello della cronologia.
+     */
+    private fun backfillName(norm: String, name: String, blocked: Set<String>) {
+        if (name.isBlank()) return
+        if (norm in whitelist.getAllowedNumbers() && whitelist.getNameFor(norm).isBlank())
+            whitelist.addAllowedNumber(norm, name)
+        if (norm in blocked && userBlacklist.getNameFor(norm).isBlank())
+            userBlacklist.addNumber(norm, name)
     }
 
     override fun onSupportNavigateUp(): Boolean { finish(); return true }

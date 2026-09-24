@@ -41,17 +41,25 @@ class WhitelistManager(context: Context) {
     fun getAllowedNumbers(): Set<String> =
         prefs.getStringSet(KEY_NUMBERS, emptySet()) ?: emptySet()
 
-    fun addAllowedNumber(number: String) {
+    /** Aggiunge un numero; il nome (es. dalla cronologia) viene mostrato nella lista. */
+    fun addAllowedNumber(number: String, name: String = "") {
         val clean = normalizeNumber(number)
         if (clean.isBlank()) return
         val updated = getAllowedNumbers().toMutableSet().apply { add(clean) }
-        prefs.edit().putStringSet(KEY_NUMBERS, updated).apply()
+        val editor = prefs.edit().putStringSet(KEY_NUMBERS, updated)
+        if (name.isNotBlank()) editor.putString(NAME_PREFIX + clean, name.trim())
+        editor.apply()
     }
 
     fun removeAllowedNumber(number: String) {
         val updated = getAllowedNumbers().toMutableSet().apply { remove(number) }
-        prefs.edit().putStringSet(KEY_NUMBERS, updated).apply()
+        prefs.edit().putStringSet(KEY_NUMBERS, updated)
+            .remove(NAME_PREFIX + normalizeNumber(number)).apply()
     }
+
+    /** Nome associato al numero in whitelist, oppure stringa vuota. */
+    fun getNameFor(number: String): String =
+        prefs.getString(NAME_PREFIX + normalizeNumber(number), "") ?: ""
 
     // -----------------------------------------------------------------------
     // Controllo se un numero è in whitelist
@@ -92,5 +100,6 @@ class WhitelistManager(context: Context) {
         private const val PREFS_NAME = "scudo_whitelist"
         const val KEY_PREFIXES = "allowed_prefixes"
         const val KEY_NUMBERS  = "allowed_numbers"
+        private const val NAME_PREFIX = "name_"
     }
 }

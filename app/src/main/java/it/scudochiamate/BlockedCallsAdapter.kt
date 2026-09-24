@@ -13,7 +13,8 @@ import java.util.Locale
 class BlockedCallsAdapter(
     private val calls: List<BlockedCall>,
     private val onDelete: (BlockedCall) -> Unit,
-    private val onWhitelist: (BlockedCall) -> Unit
+    private val onWhitelist: (BlockedCall) -> Unit,
+    private val nameFor: (String) -> String = { "" }
 ) : RecyclerView.Adapter<BlockedCallsAdapter.ViewHolder>() {
 
     private val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ITALY)
@@ -34,7 +35,9 @@ class BlockedCallsAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val call = calls[position]
-        holder.tvNumber.text = call.phoneNumber
+        val name = nameFor(call.phoneNumber)
+        holder.tvNumber.text = if (name.isNotBlank()) "$name
+${call.phoneNumber}" else call.phoneNumber
         holder.tvReason.text = when (call.reason) {
             "FOREIGN_PREFIX" -> holder.itemView.context.getString(R.string.reason_foreign)
             "KNOWN_SPAM"     -> holder.itemView.context.getString(R.string.reason_spam)

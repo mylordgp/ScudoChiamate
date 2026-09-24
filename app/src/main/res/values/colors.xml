@@ -8,6 +8,7 @@
     <color name="text_secondary">#64748B</color>
     <color name="divider">#E2E8F0</color>
     <color name="green_active">#16A34A</color>
+    <color name="green_light_bg">#DCFCE7</color>
     <color name="red_inactive">#DC2626</color>
     <color name="red_spam">#DC2626</color>
     <color name="orange_foreign">#D97706</color>

@@ -206,6 +206,9 @@ class MainActivity : AppCompatActivity() {
                 onWhitelist = { call ->
                     whitelist.addAllowedNumber(call.phoneNumber)
                     Toast.makeText(this, "Numero aggiunto alla whitelist", Toast.LENGTH_SHORT).show()
+                },
+                nameFor = { number ->
+                    blacklist.getNameFor(number).ifBlank { whitelist.getNameFor(number) }
                 }
             )
         }
