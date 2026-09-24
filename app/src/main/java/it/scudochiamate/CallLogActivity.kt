@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import it.scudochiamate.databinding.ActivityCallLogBinding
@@ -23,6 +24,7 @@ class CallLogActivity : AppCompatActivity() {
     private lateinit var adapter: CallLogAdapter
     private lateinit var userBlacklist: UserBlacklist
     private lateinit var whitelist: WhitelistManager
+    private var allEntries: List<CallLogEntry> = emptyList()
 
     private val requestPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -43,16 +45,21 @@ class CallLogActivity : AppCompatActivity() {
             onToggleBlock = { entry, block ->
                 if (block) userBlacklist.addNumber(entry.number)
                 else userBlacklist.removeNumber(entry.number)
+                // mantiene allineata la lista completa, usata dal filtro di ricerca
+                allEntries = allEntries.map {
+                    if (it.number == entry.number) it.copy(blocked = block) else it
+                }
             },
             onWhitelist = { entry ->
                 userBlacklist.removeNumber(entry.number)
                 whitelist.addAllowedNumber(entry.number)
-                Toast.makeText(this, "Numero aggiunto alla whitelist", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.call_log_whitelist_added), Toast.LENGTH_SHORT).show()
                 loadCallLog()
             }
         )
         binding.rvCallLog.layoutManager = LinearLayoutManager(this)
         binding.rvCallLog.adapter = adapter
+        binding.etSearch.doAfterTextChanged { applyFilter() }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) == PackageManager.PERMISSION_GRANTED) {
             loadCallLog()
         } else {
@@ -67,8 +74,23 @@ class CallLogActivity : AppCompatActivity() {
                 val system = readSystemBlockedNumbers()
                 readCallLog(blocked, system)
             }
-            adapter.submitList(entries)
+            allEntries = entries
+            applyFilter()
         }
+    }
+
+    /** Filtra la cronologia per nome (o numero) in base al testo di ricerca. */
+    private fun applyFilter() {
+        val query = binding.etSearch.text?.toString()?.trim().orEmpty()
+        if (query.isEmpty()) {
+            adapter.submitList(allEntries)
+            return
+        }
+        val digits = query.replace(Regex("[\\s\\-().]+"), "")
+        adapter.submitList(allEntries.filter {
+            it.name.contains(query, ignoreCase = true) ||
+                (digits.isNotEmpty() && UserBlacklist.normalize(it.number).contains(digits))
+        })
     }
 
     private fun readSystemBlockedNumbers(): Set<String> {
@@ -113,7 +135,8 @@ class CallLogActivity : AppCompatActivity() {
                         name = it.getString(mi) ?: "",
                         type = callType,
                         date = fmt.format(Date(it.getLong(di))),
-                        blocked = blocked.contains(norm) || system.contains(norm)
+                        blocked = blocked.contains(norm) || system.contains(norm),
+                        whitelisted = whitelist.isWhitelisted(number)
                     ))
                 }
             }

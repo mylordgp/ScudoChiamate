@@ -75,9 +75,11 @@
     <string name="call_log_card_title">📞 Blocca dalla cronologia</string>
     <string name="call_log_card_desc">Blocca o sblocca numeri dalla tua cronologia chiamate</string>
     <string name="call_log_title">Cronologia chiamate</string>
-    <string name="call_log_desc">Tocca Blocca per aggiungere un numero alla tua lista nera personale.</string>
+    <string name="call_log_desc">Tocca Blocca per aggiungere un numero alla tua lista nera personale, oppure ✓ OK per consentirlo sempre.</string>
     <string name="call_log_block">Blocca</string>
     <string name="call_log_unblock">Sblocca</string>
+    <string name="call_log_search_hint">Cerca per nome o numero</string>
+    <string name="call_log_whitelist_added">Numero aggiunto alla whitelist</string>
     <string name="call_log_permission_denied">Permesso cronologia chiamate non concesso</string>
 
     <!-- Motivo blocco aggiuntivo -->

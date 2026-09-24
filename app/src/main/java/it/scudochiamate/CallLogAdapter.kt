@@ -24,6 +24,8 @@ class CallLogAdapter(
         holder.b.tvNumber.text = if (entry.name.isNotBlank()) "${entry.name}\n${entry.number}" else entry.number
         holder.b.tvDate.text = entry.date
         applyBlockStyle(holder, entry.blocked)
+        // mostra il pulsante whitelist per ogni numero non ancora consentito
+        holder.b.btnWhitelistLog.visibility = if (entry.whitelisted) View.GONE else View.VISIBLE
 
         holder.b.btnBlock.setOnClickListener {
             val newBlocked = !entry.blocked
@@ -47,8 +49,6 @@ class CallLogAdapter(
         holder.b.btnBlock.setBackgroundColor(
             if (blocked) Color.parseColor("#F44336") else Color.parseColor("#4CAF50")
         )
-        // mostra il pulsante whitelist solo se il numero è bloccato
-        holder.b.btnWhitelistLog.visibility = if (blocked) View.VISIBLE else View.GONE
         holder.b.btnWhitelistLog.setBackgroundColor(Color.parseColor("#2196F3"))
     }
 

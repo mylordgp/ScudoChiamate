@@ -5,5 +5,6 @@ data class CallLogEntry(
     val name: String,
     val type: Int,
     val date: String,
-    val blocked: Boolean
+    val blocked: Boolean,
+    val whitelisted: Boolean = false
 )
