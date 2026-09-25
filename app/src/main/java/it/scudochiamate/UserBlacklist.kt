@@ -46,16 +46,20 @@ class UserBlacklist(context: Context) {
         return org.json.JSONArray(getBlockedNumbers()).toString()
     }
 
+    /** Importa i numeri dal JSON; restituisce quanti sono nuovi, -1 se il file non è valido. */
     fun importFromJson(json: String): Int {
         return try {
             val array = org.json.JSONArray(json)
-            var count = 0
-            for (i in 0 until array.length()) {
-                val num = normalize(array.getString(i))
-             addNumber(num)
-            count++
+            val imported = (0 until array.length())
+                .map { normalize(array.getString(it)) }
+                .filter { it.isNotBlank() }
+                .toSet()
+            val current = getBlockedNumbers()
+            val added = imported - current
+            if (added.isNotEmpty()) {
+                prefs.edit().putStringSet(KEY_NUMBERS, current + added).apply()
             }
-            count
+            added.size
         } catch (e: Exception) { -1 }
     }
 }
