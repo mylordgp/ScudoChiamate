@@ -102,6 +102,8 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateTimeBlockLabels()
+        // i nomi possono essere cambiati in Liste numeri: ridisegna le righe
+        binding.rvBlockedCalls.adapter?.notifyDataSetChanged()
     }
 
     // -------------------------------------------------------------------------

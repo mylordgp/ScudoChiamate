@@ -46,7 +46,8 @@ class CallLogActivity : AppCompatActivity() {
                 if (block) {
                     // un numero non può stare in entrambe le liste: il blocco lo toglie dalla whitelist
                     whitelist.removeAllowedNumber(entry.number)
-                    userBlacklist.addNumber(entry.number, entry.name)
+                    userBlacklist.addNumber(entry.number,
+                        entry.name.ifBlank { whitelist.getNameFor(entry.number) })
                 } else {
                     userBlacklist.removeNumber(entry.number)
                 }
@@ -61,7 +62,8 @@ class CallLogActivity : AppCompatActivity() {
             },
             onWhitelist = { entry ->
                 userBlacklist.removeNumber(entry.number)
-                whitelist.addAllowedNumber(entry.number, entry.name)
+                whitelist.addAllowedNumber(entry.number,
+                    entry.name.ifBlank { userBlacklist.getNameFor(entry.number) })
                 Toast.makeText(this, getString(R.string.call_log_whitelist_added), Toast.LENGTH_SHORT).show()
                 loadCallLog()
             }

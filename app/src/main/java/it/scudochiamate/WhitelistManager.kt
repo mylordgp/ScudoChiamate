@@ -52,11 +52,11 @@ class WhitelistManager(context: Context) {
         editor.apply()
     }
 
+    /** Rimuove un numero; il nome resta salvato e ricompare se viene riaggiunto. */
     fun removeAllowedNumber(number: String) {
         val clean = normalizeNumber(number)
         val updated = getAllowedNumbers().toMutableSet().apply { removeAll { normalizeNumber(it) == clean } }
-        prefs.edit().putStringSet(KEY_NUMBERS, updated)
-            .remove(NAME_PREFIX + clean).apply()
+        prefs.edit().putStringSet(KEY_NUMBERS, updated).apply()
     }
 
     /** Imposta o cambia il nome di un numero; un nome vuoto lo cancella. */

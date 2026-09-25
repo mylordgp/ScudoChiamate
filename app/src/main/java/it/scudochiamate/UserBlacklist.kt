@@ -19,11 +19,18 @@ class UserBlacklist(context: Context) {
         editor.apply()
     }
 
+    /** Sblocca un numero; il nome resta salvato e ricompare se viene bloccato di nuovo. */
     fun removeNumber(number: String) {
         val current = getBlockedNumbers().toMutableSet()
         current.remove(normalize(number))
-        prefs.edit().putStringSet(KEY_NUMBERS, current)
-            .remove(NAME_PREFIX + normalize(number)).apply()
+        prefs.edit().putStringSet(KEY_NUMBERS, current).apply()
+    }
+
+    /** Imposta o cambia il nome di un numero bloccato; un nome vuoto lo cancella. */
+    fun setNameFor(number: String, name: String) {
+        val key = NAME_PREFIX + normalize(number)
+        if (name.isBlank()) prefs.edit().remove(key).apply()
+        else prefs.edit().putString(key, name.trim()).apply()
     }
 
     /** Nome associato al numero bloccato, oppure stringa vuota. */

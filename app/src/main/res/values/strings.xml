@@ -34,12 +34,14 @@
     <string name="time_to_default">Fino alle 08:00</string>
 
     <!-- Whitelist -->
-    <string name="whitelist_card_title">✅ Numeri e prefissi consentiti</string>
-    <string name="whitelist_card_desc">Aggiungi prefissi esteri (+44, +33…) o numeri fissi sempre ammessi</string>
+    <string name="whitelist_card_title">📋 Numeri consentiti e bloccati</string>
+    <string name="whitelist_card_desc">Prefissi esteri (+44, +33…) e numeri sempre ammessi, o numeri da bloccare sempre</string>
     <string name="btn_manage">Gestisci</string>
-    <string name="whitelist_title">Lista bianca</string>
+    <string name="whitelist_title">Liste numeri</string>
     <string name="tab_prefixes">Prefissi Paese</string>
-    <string name="tab_numbers">Numeri specifici</string>
+    <string name="tab_numbers">Numeri consentiti</string>
+    <string name="tab_blocked">Bloccati</string>
+    <string name="blocked_add_number">Blocca un numero</string>
     <string name="whitelist_empty">Nessun elemento. Tocca + per aggiungere.</string>
     <string name="whitelist_add_prefix">Aggiungi prefisso Paese</string>
     <string name="whitelist_add_number">Aggiungi numero specifico</string>
