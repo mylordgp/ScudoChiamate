@@ -45,6 +45,9 @@
     <string name="whitelist_add_number">Aggiungi numero specifico</string>
     <string name="whitelist_prefix_hint">es. +44 oppure +33</string>
     <string name="whitelist_number_hint">es. +447700900123</string>
+    <string name="whitelist_name_hint">Di chi si tratta? (facoltativo)</string>
+    <string name="whitelist_edit_name">Modifica nome</string>
+    <string name="save">Salva</string>
     <string name="btn_add">Aggiungi</string>
 
     <!-- Import sistema -->

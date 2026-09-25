@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -73,11 +74,35 @@ class ManageWhitelistActivity : AppCompatActivity() {
             val name = if (currentTab == 1) whitelist.getNameFor(item) else ""
             if (name.isNotBlank()) "$name\n$item" else item
         }
-        rvList.adapter = WhitelistItemAdapter(items, label) { item ->
+        rvList.adapter = WhitelistItemAdapter(
+            items, label,
+            // solo i numeri hanno un nome modificabile
+            onClick = if (currentTab == 1) { item -> showEditNameDialog(item) } else null
+        ) { item ->
             if (currentTab == 0) whitelist.removeAllowedPrefix(item)
             else                 whitelist.removeAllowedNumber(item)
             refreshList()
         }
+    }
+
+    private fun showEditNameDialog(number: String) {
+        val input = EditText(this).apply {
+            hint = getString(R.string.whitelist_name_hint)
+            setText(whitelist.getNameFor(number))
+            setSelection(text.length)
+            setPadding(48, 24, 48, 24)
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.whitelist_edit_name))
+            .setMessage(number)
+            .setView(input)
+            .setPositiveButton(R.string.save) { _, _ ->
+                whitelist.setNameFor(number, input.text.toString())
+                refreshList()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     private fun showAddDialog() {
@@ -93,17 +118,25 @@ class ManageWhitelistActivity : AppCompatActivity() {
 
         val input = EditText(this).apply {
             this.hint = hint
+        }
+        val nameInput = EditText(this).apply {
+            this.hint = getString(R.string.whitelist_name_hint)
+        }
+        val form = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
             setPadding(48, 24, 48, 24)
+            addView(input)
+            if (!isPrefixTab) addView(nameInput)
         }
 
         AlertDialog.Builder(this)
             .setTitle(title)
-            .setView(input)
-            .setPositiveButton(R.string.confirm) { _, _ ->
+            .setView(form)
+            .setPositiveButton(R.string.save) { _, _ ->
                 val value = input.text.toString().trim()
                 if (value.isNotBlank()) {
                     if (isPrefixTab) whitelist.addAllowedPrefix(value)
-                    else             whitelist.addAllowedNumber(value)
+                    else             whitelist.addAllowedNumber(value, nameInput.text.toString())
                     refreshList()
                 }
             }
@@ -116,6 +149,7 @@ class ManageWhitelistActivity : AppCompatActivity() {
 class WhitelistItemAdapter(
     private val items: List<String>,
     private val label: (String) -> String = { it },
+    private val onClick: ((String) -> Unit)? = null,
     private val onDelete: (String) -> Unit
 ) : RecyclerView.Adapter<WhitelistItemAdapter.VH>() {
 
@@ -134,6 +168,7 @@ class WhitelistItemAdapter(
         val item = items[position]
         holder.tvValue.text = label(item)
         holder.btnDel.setOnClickListener { onDelete(item) }
+        holder.itemView.setOnClickListener(onClick?.let { click -> View.OnClickListener { click(item) } })
     }
 
     override fun getItemCount() = items.size

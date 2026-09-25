@@ -59,6 +59,13 @@ class WhitelistManager(context: Context) {
             .remove(NAME_PREFIX + clean).apply()
     }
 
+    /** Imposta o cambia il nome di un numero; un nome vuoto lo cancella. */
+    fun setNameFor(number: String, name: String) {
+        val key = NAME_PREFIX + normalizeNumber(number)
+        if (name.isBlank()) prefs.edit().remove(key).apply()
+        else prefs.edit().putString(key, name.trim()).apply()
+    }
+
     /** Nome associato al numero in whitelist, oppure stringa vuota. */
     fun getNameFor(number: String): String =
         prefs.getString(NAME_PREFIX + normalizeNumber(number), "") ?: ""
