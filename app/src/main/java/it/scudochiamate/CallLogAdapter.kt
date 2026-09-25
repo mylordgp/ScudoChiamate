@@ -34,14 +34,8 @@ class CallLogAdapter(
         // mostra il pulsante whitelist per ogni numero non ancora consentito
         holder.b.btnWhitelistLog.visibility = if (entry.whitelisted) View.GONE else View.VISIBLE
 
-        holder.b.btnBlock.setOnClickListener {
-            val newBlocked = !entry.blocked
-            val updated = entry.copy(blocked = newBlocked)
-            onToggleBlock(updated, newBlocked)
-            val newList = currentList.toMutableList()
-            newList[holder.adapterPosition] = updated
-            submitList(newList)
-        }
+        // la lista aggiornata la ripubblica l'activity
+        holder.b.btnBlock.setOnClickListener { onToggleBlock(entry, !entry.blocked) }
 
         holder.b.btnWhitelistLog.setOnClickListener {
             onWhitelist(entry)

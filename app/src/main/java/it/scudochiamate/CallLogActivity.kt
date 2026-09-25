@@ -43,12 +43,21 @@ class CallLogActivity : AppCompatActivity() {
         whitelist = WhitelistManager(this)
         adapter = CallLogAdapter(
             onToggleBlock = { entry, block ->
-                if (block) userBlacklist.addNumber(entry.number, entry.name)
-                else userBlacklist.removeNumber(entry.number)
-                // mantiene allineata la lista completa, usata dal filtro di ricerca
-                allEntries = allEntries.map {
-                    if (it.number == entry.number) it.copy(blocked = block) else it
+                if (block) {
+                    // un numero non può stare in entrambe le liste: il blocco lo toglie dalla whitelist
+                    whitelist.removeAllowedNumber(entry.number)
+                    userBlacklist.addNumber(entry.number, entry.name)
+                } else {
+                    userBlacklist.removeNumber(entry.number)
                 }
+                // aggiorna tutte le righe dello stesso numero, anche quelle nascoste dal filtro
+                val norm = UserBlacklist.normalize(entry.number)
+                allEntries = allEntries.map {
+                    if (UserBlacklist.normalize(it.number) == norm)
+                        it.copy(blocked = block, whitelisted = !block && whitelist.isWhitelisted(it.number))
+                    else it
+                }
+                applyFilter()
             },
             onWhitelist = { entry ->
                 userBlacklist.removeNumber(entry.number)
@@ -132,13 +141,15 @@ class CallLogActivity : AppCompatActivity() {
                     val norm = UserBlacklist.normalize(number)
                     val name = it.getString(mi) ?: ""
                     backfillName(norm, name, blocked)
+                    val blockedNow = blocked.contains(norm) || system.contains(norm)
                     entries.add(CallLogEntry(
                         number = number,
                         name = name,
                         type = callType,
                         date = fmt.format(Date(it.getLong(di))),
-                        blocked = blocked.contains(norm) || system.contains(norm),
-                        whitelisted = whitelist.isWhitelisted(number)
+                        blocked = blockedNow,
+                        // la blacklist vince sulla whitelist (vedi SpamCallScreeningService)
+                        whitelisted = !blockedNow && whitelist.isWhitelisted(number)
                     ))
                 }
             }

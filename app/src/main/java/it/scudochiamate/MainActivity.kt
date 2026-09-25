@@ -206,7 +206,10 @@ class MainActivity : AppCompatActivity() {
                 calls,
                 onDelete = { viewModel.deleteCall(it) },
                 onWhitelist = { call ->
-                    whitelist.addAllowedNumber(call.phoneNumber)
+                    // la blacklist vince sulla whitelist: senza rimuoverlo resterebbe bloccato
+                    val name = blacklist.getNameFor(call.phoneNumber)
+                    blacklist.removeNumber(call.phoneNumber)
+                    whitelist.addAllowedNumber(call.phoneNumber, name)
                     Toast.makeText(this, "Numero aggiunto alla whitelist", Toast.LENGTH_SHORT).show()
                 },
                 nameFor = { number ->
