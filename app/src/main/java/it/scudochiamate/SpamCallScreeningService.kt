@@ -42,11 +42,11 @@ class SpamCallScreeningService : CallScreeningService() {
         val userBl      = UserBlacklist(this)
         val dynamicSpam = DynamicSpamList(this)
 
-        Log.d(tag, "Chiamata in entrata da: \$rawNumber")
+        Log.d(tag, "Chiamata in entrata da: $rawNumber")
 
         // 0. USER BLACKLIST → blocca sempre
         if (userBl.isBlocked(rawNumber)) {
-            Log.i(tag, "Blacklist utente — bloccata: \$rawNumber")
+            Log.i(tag, "Blacklist utente — bloccata: $rawNumber")
             onCallBlocked(rawNumber, BlockReason.USER_BLACKLIST)
             respondToCall(callDetails, buildBlockResponse())
             return
@@ -54,14 +54,14 @@ class SpamCallScreeningService : CallScreeningService() {
 
         // 1. WHITELIST → passa sempre
         if (whitelist.isWhitelisted(rawNumber)) {
-            Log.d(tag, "Whitelist — consentita: \$rawNumber")
+            Log.d(tag, "Whitelist — consentita: $rawNumber")
             respondToCall(callDetails, buildAllowResponse())
             return
         }
 
         // 2. FASCIA ORARIA → blocca tutto
         if (timeMgr.isCurrentlyInBlockPeriod()) {
-            Log.i(tag, "Time-block attivo — bloccata: \$rawNumber")
+            Log.i(tag, "Time-block attivo — bloccata: $rawNumber")
             onCallBlocked(rawNumber, BlockReason.TIME_BLOCK)
             respondToCall(callDetails, buildBlockResponse())
             return
@@ -78,11 +78,11 @@ class SpamCallScreeningService : CallScreeningService() {
         }
 
         if (blockReason != null) {
-            Log.i(tag, "BLOCCATA: \$rawNumber (motivo: \$blockReason)")
+            Log.i(tag, "BLOCCATA: $rawNumber (motivo: $blockReason)")
             onCallBlocked(rawNumber, blockReason)
             respondToCall(callDetails, buildBlockResponse())
         } else {
-            Log.d(tag, "Consentita: \$rawNumber")
+            Log.d(tag, "Consentita: $rawNumber")
             respondToCall(callDetails, buildAllowResponse())
         }
     }

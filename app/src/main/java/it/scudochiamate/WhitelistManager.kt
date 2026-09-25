@@ -30,7 +30,8 @@ class WhitelistManager(context: Context) {
     }
 
     fun removeAllowedPrefix(prefix: String) {
-        val updated = getAllowedPrefixes().toMutableSet().apply { remove(prefix) }
+        val clean = normalizePrefix(prefix)
+        val updated = getAllowedPrefixes().toMutableSet().apply { removeAll { normalizePrefix(it) == clean } }
         prefs.edit().putStringSet(KEY_PREFIXES, updated).apply()
     }
 
@@ -52,9 +53,10 @@ class WhitelistManager(context: Context) {
     }
 
     fun removeAllowedNumber(number: String) {
-        val updated = getAllowedNumbers().toMutableSet().apply { remove(number) }
+        val clean = normalizeNumber(number)
+        val updated = getAllowedNumbers().toMutableSet().apply { removeAll { normalizeNumber(it) == clean } }
         prefs.edit().putStringSet(KEY_NUMBERS, updated)
-            .remove(NAME_PREFIX + normalizeNumber(number)).apply()
+            .remove(NAME_PREFIX + clean).apply()
     }
 
     /** Nome associato al numero in whitelist, oppure stringa vuota. */

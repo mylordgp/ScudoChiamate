@@ -21,14 +21,14 @@ class SpamListUpdater(ctx: Context, params: WorkerParameters) : CoroutineWorker(
             if (content.length > 50) {
                 val list = DynamicSpamList(applicationContext)
                 list.update(content)
-                Log.i(TAG, "Lista spam aggiornata: \${list.count()} voci")
+                Log.i(TAG, "Lista spam aggiornata: ${list.count()} voci")
                 Result.success()
             } else {
                 Log.w(TAG, "Risposta troppo corta — retry")
                 Result.retry()
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Errore download lista spam: \${e.message}")
+            Log.e(TAG, "Errore download lista spam: ${e.message}")
             Result.retry()
         }
     }
