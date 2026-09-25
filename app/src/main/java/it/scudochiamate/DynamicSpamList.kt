@@ -6,8 +6,8 @@ import android.content.SharedPreferences
 /**
  * Lista spam scaricata automaticamente da fonti comunitarie.
  *
- * Fonte: https://github.com/Oros42/phone-blacklist
- * Lista mantenuta dalla community, aggiornata automaticamente,
+ * Fonti: vedi SpamListUpdater.SPAM_LIST_URLS.
+ * Liste mantenute dalla community, aggiornate automaticamente,
  * NESSUNA manutenzione richiesta all'utente.
  */
 class DynamicSpamList(context: Context) {
@@ -48,8 +48,10 @@ class DynamicSpamList(context: Context) {
             .mapNotNull { line ->
                 line.split(",", ";", "\t").firstOrNull()?.trim()
             }
-            .map { normalize(it) }
+            // Filtro prima di normalize: un codice breve estero ("3922") non deve
+            // diventare un finto numero italiano ("+393922")
             .filter { it.count(Char::isDigit) >= 5 }
+            .map { normalize(it) }
             .toSet()
     }
 

@@ -9,24 +9,30 @@ import java.util.concurrent.TimeUnit
 /**
  * Worker periodico — scarica automaticamente la lista spam comunitaria.
  *
- * Fonte: https://github.com/Oros42/phone-blacklist
- * Lista mantenuta dalla community GitHub, nessuna registrazione o chiave API richiesta.
+ * Fonti: vedi SPAM_LIST_URLS (lista italiana + lista internazionale).
+ * Liste mantenute dalla community GitHub, nessuna registrazione o chiave API richiesta.
  * Aggiornamento automatico ogni 7 giorni in background.
  */
 class SpamListUpdater(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, params) {
 
+    /**
+     * Scarica tutte le liste e le unisce. Se anche una sola fallisce non si
+     * aggiorna nulla: meglio tenere la lista precedente che perdere metà voci.
+     */
     override suspend fun doWork(): Result {
         return try {
-            val content = URL(SPAM_LIST_URL).readText(Charsets.UTF_8)
-            if (content.length > 50) {
-                val list = DynamicSpamList(applicationContext)
-                list.update(content)
-                Log.i(TAG, "Lista spam aggiornata: ${list.count()} voci")
-                Result.success()
-            } else {
-                Log.w(TAG, "Risposta troppo corta — retry")
-                Result.retry()
+            val contents = SPAM_LIST_URLS.map { url ->
+                val content = URL(url).readText(Charsets.UTF_8)
+                if (content.isBlank()) {
+                    Log.w(TAG, "Risposta vuota da $url — retry")
+                    return Result.retry()
+                }
+                content
             }
+            val list = DynamicSpamList(applicationContext)
+            list.update(contents.joinToString("\n"))
+            Log.i(TAG, "Lista spam aggiornata: ${list.count()} voci")
+            Result.success()
         } catch (e: Exception) {
             Log.e(TAG, "Errore download lista spam: ${e.message}")
             Result.retry()
@@ -37,11 +43,15 @@ class SpamListUpdater(ctx: Context, params: WorkerParameters) : CoroutineWorker(
         private const val TAG = "SpamListUpdater"
         private const val WORK_NAME = "spam_list_update"
 
-        // Lista spam comunitaria — aggiornata automaticamente dalla community
-        // Nessun intervento manuale richiesto all'utente
-        // https://github.com/Oros42/phone-blacklist
-        private const val SPAM_LIST_URL =
-            "https://raw.githubusercontent.com/Oros42/phone-blacklist/master/blacklist.csv"
+        // Liste spam comunitarie — aggiornate automaticamente dalla community.
+        // Formato: CSV con il numero E.164 nella prima colonna.
+        private val SPAM_LIST_URLS = listOf(
+            // https://github.com/thesqual87/blocklist-telefonica-italia (CC BY-SA 4.0,
+            // richiede citazione della fonte: vedi R.string.spam_sources)
+            "https://raw.githubusercontent.com/thesqual87/blocklist-telefonica-italia/main/data/blocklist.csv",
+            // https://github.com/Oros42/phone-blacklist (Unlicense)
+            "https://raw.githubusercontent.com/Oros42/phone-blacklist/master/blacklist.csv",
+        )
 
         /** Pianifica aggiornamento settimanale (KEEP = non riprogramma se già attivo). */
         fun schedule(context: Context) {

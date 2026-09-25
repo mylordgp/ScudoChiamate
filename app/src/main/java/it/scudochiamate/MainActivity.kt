@@ -4,6 +4,8 @@ import android.app.TimePickerDialog
 import android.app.role.RoleManager
 import android.content.Intent
 import android.os.Bundle
+import android.text.Html
+import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -262,6 +264,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUpdateSpamButton() {
+        // Citazione fonti obbligatoria per la licenza CC BY-SA della lista italiana
+        binding.tvSpamSources.text =
+            Html.fromHtml(getString(R.string.spam_sources), Html.FROM_HTML_MODE_COMPACT)
+        binding.tvSpamSources.movementMethod = LinkMovementMethod.getInstance()
+
         binding.btnUpdateSpam.setOnClickListener {
             binding.btnUpdateSpam.isEnabled = false
             binding.btnUpdateSpam.text = getString(R.string.update_spam_running)
